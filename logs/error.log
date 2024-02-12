@@ -1,0 +1,5 @@
+2024/02/12 19:37:30 [error] 6149#6149: *1 "/home/grape/ics7-net-cw/net_course/data/index.html" is forbidden (13: Permission denied), client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:7000"
+2024/02/12 19:37:30 [error] 6149#6149: *1 open() "/home/grape/ics7-net-cw/net_course/data/favicon.ico" failed (13: Permission denied), client: 127.0.0.1, server: , request: "GET /favicon.ico HTTP/1.1", host: "localhost:7000", referrer: "http://localhost:7000/"
+2024/02/12 19:38:42 [error] 6149#6149: *3 "/home/grape/ics7-net-cw/net_course/data/index.html" is forbidden (13: Permission denied), client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:7000"
+2024/02/12 19:39:17 [error] 6149#6149: *3 "/home/grape/ics7-net-cw/net_course/data/index.html" is forbidden (13: Permission denied), client: 127.0.0.1, server: , request: "GET / HTTP/1.1", host: "localhost:7000"
+2024/02/12 19:49:52 [error] 7875#7875: *1 open() "/home/grape/ics7-net-cw/net_course/data/favicon.ico" failed (2: No such file or directory), client: 127.0.0.1, server: , request: "GET /favicon.ico HTTP/1.1", host: "localhost:7000", referrer: "http://localhost:7000/"
