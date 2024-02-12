@@ -1,0 +1,140 @@
+% !TeX spellcheck = ru_RU
+\chapter{Технологический раздел}
+
+В данном разделе будут приведены средства реализации программного обеспечения, представлены листинги исходного кода.
+
+\section{Средства реализации}
+
+Для реализации ПО был выбран язык C, согласно требованиям к выполнению курсовой работы.
+
+\section{Реализация алгоритмов}
+В листингах \ref{listing_server}-\ref{listing_server_3} представлена реализация основного алгоритма работы сервера. 
+А в листингах \ref{listing_http}-\ref{listing_http_2} представлена реализация обработки запросов на сервер.
+
+	\begin{lstlisting}[caption=Основной алгоритм работы сервера]
+int init_server() {
+	close(STDIN_FILENO);
+	close(STDERR_FILENO);
+	signal(SIGCHLD, sigchld_handler);
+	worker_count = get_nprocs();
+	
+	servsock = socket(AF_INET, SOCK_STREAM, 0);
+	if (servsock == -1) {
+		log_error("Cannot create socket");
+		return EXIT_FAILURE;
+	}
+	if (setsockopt(servsock, SOL_SOCKET, SO_REUSEADDR, &(int){ 1 }, sizeof(int)) == -1) {
+		close(servsock);
+	\end{lstlisting}
+	
+	\begin{lstlisting}[caption=Основной алгоритм работы сервера (продолжение)]
+		log_error("Cannot set socket to reuse address");
+		return EXIT_FAILURE;
+	}
+	struct sockaddr_in servaddr;
+	servaddr.sin_family = AF_INET;
+	servaddr.sin_addr.s_addr = inet_addr(HOST);
+	servaddr.sin_port = htons(PORT);
+	if (bind(servsock, (struct sockaddr *)&servaddr, sizeof(servaddr)) == -1) {
+		close(servsock);
+		log_error("Cannot bind address");
+		return EXIT_FAILURE;
+	}
+	
+	max_fd = servsock;
+	rfds = malloc(sizeof(fd_set));
+	FD_ZERO(rfds);
+	FD_SET(servsock, rfds);
+	workers = malloc(sizeof(worker_t) * worker_count);
+	for (size_t i = 0; i < worker_count; i++) {
+		workers[i].servsock = servsock;
+		if (fork_worker(workers + i) == EXIT_FAILURE) {
+			free(workers);
+			return EXIT_FAILURE;
+		}
+	}
+	return EXIT_SUCCESS;
+}
+	\end{lstlisting}
+
+\pagebreak
+
+	\begin{lstlisting}[caption=Обработка запроса сервером]
+void handle_connection(connection_t *connection) {
+	connection->is_served = 1;
+	int fd = connection->fd;
+	memset(connection->request.buffer, 0, REQUEST_SIZE_LIMIT + 1);
+	read(fd, connection->request.buffer, REQUEST_SIZE_LIMIT - 1);
+	
+	
+	sscanf(
+	connection->request.buffer, "%s %s", connection->request.method, connection->request.path);
+	
+	if (strcmp(connection->request.method, "GET") == 0) {
+		log_info("GET request");
+		struct stat sb;
+		char actual_path[PATH_SIZE_LIMIT + 3];
+		if (strcmp(connection->request.path, "/") == 0) {
+			sprintf(actual_path, "./index.html");
+		} else {
+			sprintf(actual_path, ".%s", connection->request.path);
+		}
+		
+		int rc;
+		if ((rc = stat(actual_path, &sb)) == 0) {
+			const char *mime_type = detect_mime_type(actual_path);
+			sprintf(connection->response.status, RESPONSE_TEMPLATE, 200, "OK");
+			sprintf(connection->response.headers, CONTENT_TYPE_TEMPLATE, mime_type, sb.st_size);
+		} else {
+			sprintf(connection->response.status, RESPONSE_TEMPLATE, 404, "Not Found");
+			write(fd, connection->response.status, strlen(connection->response.status));
+		}
+		if (rc == 0) {
+			FILE *file = fopen(actual_path, "rb");
+			if (file == NULL && errno == EACCES) {
+				sprintf(connection->response.status, RESPONSE_TEMPLATE, 403, "Forbidden");
+			}
+		\end{lstlisting}
+		
+		
+		\begin{lstlisting}[caption=Обработка запроса сервером (продолжение)]
+			write(fd, connection->response.status, strlen(connection->response.status));
+			write(fd, connection->response.headers, strlen(connection->response.headers));
+			write_file(file, fd);
+			fclose(file);
+		}
+		
+	} else if (strcmp(connection->request.method, "HEAD") == 0) {
+		log_info("HEAD request");
+		struct stat sb;
+		char actual_path[PATH_SIZE_LIMIT + 3];
+		sprintf(actual_path, ".%s", connection->request.path);
+		if (stat(actual_path, &sb) == 0) {
+			const char *mime_type = detect_mime_type(actual_path);
+			sprintf(connection->response.status, RESPONSE_TEMPLATE, 200, "OK");
+			sprintf(connection->response.headers, CONTENT_TYPE_TEMPLATE, mime_type, sb.st_size);
+		} else {
+			sprintf(connection->response.status, RESPONSE_TEMPLATE, 404, "Not Found");
+		}
+		
+		write(fd, connection->response.status, strlen(connection->response.status));
+		write(fd, connection->response.headers, strlen(connection->response.headers));
+	} else {
+		log_info("Unknown request");
+		sprintf(connection->response.status, RESPONSE_TEMPLATE, 405, "Method Not Allowed");
+		write(fd, connection->response.status, strlen(connection->response.status));
+	}
+}
+\end{lstlisting}
+
+\section{Пример работы программы}
+
+На рисунке \ref{work} представлен пример работы программы, а именно основная страница, отображаемая при обращении к серверу.
+
+\pagebreak
+
+%\img{0.3}{work}{Пример работы программы}
+
+\section*{Вывод}
+
+В этом разделе был выбран язык программирования, представлены листинги исходного кода.

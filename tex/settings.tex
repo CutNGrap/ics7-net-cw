@@ -1,0 +1,103 @@
+
+\usepackage[utf8]{inputenc}
+\usepackage[T2A]{fontenc}
+\usepackage[english,russian]{babel}
+\usepackage{cmap}
+\usepackage{enumitem}
+
+\usepackage{csvsimple}
+\usepackage{hyphenat} 
+\usepackage{amstext, amsmath,amsfonts,amssymb,amsthm,mathtools} 
+
+\usepackage{setspace}
+\onehalfspacing 
+
+\usepackage{geometry}
+\geometry{left=30mm}
+\geometry{right=15mm}
+\geometry{top=20mm}
+\geometry{bottom=20mm}
+
+\usepackage{graphicx}
+\graphicspath{{img/}} 
+
+\usepackage{threeparttable}
+\usepackage{bigdelim}
+
+\usepackage{setspace}
+\onehalfspacing % Полуторный интервал
+
+\frenchspacing
+\usepackage{indentfirst} % Красная строка
+
+\usepackage{cases}
+
+\usepackage[unicode,pdftex]{hyperref} % Ссылки в pdf
+\hypersetup{hidelinks}
+
+\usepackage{xcolor}
+\usepackage{listings}
+% Для листинга кода:
+\lstset{%
+	language=c,   					% выбор языка для подсветки	
+	basicstyle=\small\sffamily,			% размер и начертание шрифта для подсветки кода
+	numbers=left,						% где поставить нумерацию строк (слева\справа)
+	%numberstyle=,					% размер шрифта для номеров строк
+	stepnumber=1,						% размер шага между двумя номерами строк
+	numbersep=5pt,						% как далеко отстоят номера строк от подсвечиваемого кода
+	frame=single,						% рисовать рамку вокруг кода
+	tabsize=4,							% размер табуляции по умолчанию равен 4 пробелам
+	captionpos=t,						% позиция заголовка вверху [t] или внизу [b]
+	breaklines=true,					
+	breakatwhitespace=true,				% переносить строки только если есть пробел
+	escapeinside={\#*}{*)},				% если нужно добавить комментарии в коде
+	backgroundcolor=\color{white},
+}
+\usepackage{chngcntr}
+\usepackage{caption}
+\captionsetup{within=none}
+\captionsetup{labelsep = endash}
+\captionsetup[figure]{name = {Рисунок}, justification = centerlast}
+\captionsetup[lstlisting]{justification = raggedright, singlelinecheck=false}
+\captionsetup[table]{justification = centerlast}
+
+\captionsetup[table]{
+	justification=raggedleft,
+	singlelinecheck=false
+}
+
+
+\renewcommand{\theequation}{\arabic{equation}}
+
+
+\usepackage{titlesec}
+
+\titleformat{\chapter}{\LARGE\bfseries\centering}{\thechapter}{20pt}{\LARGE\bfseries}
+\titleformat{\section}{\large\bfseries}{\thesection}{20pt}{\Large\bfseries}
+
+\renewcommand\labelitemi{\ ---\ }
+\renewcommand\labelenumi{\theenumi)}
+
+\newcommand{\img}[3] {
+	\begin{figure}[h!]
+		\center{\includegraphics[scale = #1]{../img/#2}}
+		\caption{#3}
+		\label{img:#2}
+	\end{figure}
+}
+
+\newcommand{\lst}[4]{
+\lstinputlisting[language=с, firstline=#1, lastline=#2, label=lst:#3,caption=#4]{../src/func.с}
+}
+
+
+\usepackage{siunitx,array,booktabs}
+
+\usepackage[figure,table]{totalcount} % Подсчет изображений, таблиц
+
+\usepackage{placeins}
+\usepackage{lastpage} % Для подсчета числа страниц
+
+\usepackage{pdfpages}
+
+
